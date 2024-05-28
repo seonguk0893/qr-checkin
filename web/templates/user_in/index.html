@@ -1,0 +1,278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unmanned Store</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="form-structor">
+      <form method="post" action="{% url 'login' %}">
+        <div class="login">
+          <h2 class="form-title" id="login"><span>or</span>Log in</h2>
+          <div class="form-holder">
+            {% csrf_token %} {{ login_form.username }} {{ login_form.password }}
+          </div>
+          <button type="submit" class="submit-btn" id="login-btn">
+            Log in
+          </button>
+        </div>
+      </form>
+
+      <div class="signup slide-up">
+        <div class="center">
+          <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
+          <form
+            class="form-holder"
+            id="signup-form"
+            method="post"
+            action="{% url 'signup' %}"
+          >
+            {% csrf_token %} {{ form.non_field_errors }}
+            <!-- Hidden error messages -->
+            <div class="form-group">
+              <input
+                type="text"
+                class="input"
+                name="username"
+                id="username"
+                value="{{ form.username.value|default_if_none:'' }}"
+                placeholder="ID"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                class="input"
+                name="password1"
+                id="password1"
+                value="{{ form.password1.value|default_if_none:'' }}"
+                placeholder="Password"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                class="input"
+                name="password2"
+                id="password2"
+                value="{{ form.password2.value|default_if_none:'' }}"
+                placeholder="Password Confirm"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="email"
+                class="input"
+                name="email"
+                id="email"
+                value="{{ form.email.value|default_if_none:'' }}"
+                placeholder="Email"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                class="input"
+                name="name"
+                id="name"
+                value="{{ form.name.value|default_if_none:'' }}"
+                placeholder="Name"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="text"
+                class="input"
+                name="contact"
+                id="contact"
+                value="{{ form.contact.value|default_if_none:'' }}"
+                placeholder="Contact"
+              />
+            </div>
+            <button type="submit" class="submit-btn">Sign up</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div
+      class="modal fade"
+      id="errorModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="errorModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="errorModalLabel">Error</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {% for message in messages %} {% if message.tags == 'error' %}
+            <div class="alert alert-danger">{{ message }}</div>
+            {% endif %} {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      class="modal fade"
+      id="successModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="successModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">Success</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            {% for message in messages %} {% if message.tags == 'success' %}
+            <div class="alert alert-success">{{ message }}</div>
+            {% endif %} {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+    <script>
+      // 폼 제출 시 유효성 검사
+      document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("signup-form");
+        form.addEventListener("submit", function (event) {
+          if (!joinform_check()) {
+            event.preventDefault();
+          }
+        });
+
+        // 성공, 실패 모달
+        if ($(".alert-danger").length > 0) {
+          $("#errorModal").modal("show");
+        } else if ($(".alert-success").length > 0) {
+          $("#successModal").modal("show");
+        }
+      });
+
+      // 현재 url 확인 후 폼 전환
+      const currentUrl = "{{ request.path }}";
+
+      if (currentUrl === "{% url 'signup' %}") {
+        const signupForm = document.querySelector(".signup");
+        const loginForm = document.querySelector(".login");
+
+        loginForm.classList.add("slide-up");
+        signupForm.classList.remove("slide-up");
+      }
+
+      // 유효성 검사 함수
+      function joinform_check() {
+        var username = document.getElementById("username");
+        var password1 = document.getElementById("password1");
+        var password2 = document.getElementById("password2");
+        var email = document.getElementById("email");
+        var name = document.getElementById("name");
+        var contact = document.getElementById("contact");
+
+        if (username.value == "") {
+          alert("아이디를 입력하세요.");
+          username.focus();
+          return false;
+        }
+
+        if (password1.value == "") {
+          alert("비밀번호를 입력하세요.");
+          password1.focus();
+          return false;
+        }
+
+        var pwdCheck = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+
+        if (!pwdCheck.test(password1.value)) {
+          alert(
+            "비밀번호는 영문자+숫자+특수문자 조합으로 8~25자리 사용해야 합니다."
+          );
+          password1.focus();
+          return false;
+        }
+
+        if (password2.value !== password1.value) {
+          alert("비밀번호가 일치하지 않습니다.");
+          password2.focus();
+          return false;
+        }
+
+        if (email.value == "") {
+          alert("이메일을 입력하세요.");
+          email.focus();
+          return false;
+        }
+
+        if (name.value == "") {
+          alert("이름을 입력하세요.");
+          name.focus();
+          return false;
+        }
+
+        var reg = /^[0-9]+$/g;
+
+        if (contact.value == "" || !reg.test(contact.value)) {
+          alert("전화번호는 숫자만 입력할 수 있습니다.");
+          contact.focus();
+          return false;
+        }
+
+        return true;
+      }
+    </script>
+  </body>
+</html>

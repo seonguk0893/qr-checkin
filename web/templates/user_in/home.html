@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unmanned Store</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  </head>
+  <body>
+    <div class="qr-checkin">
+      <div class="header">QR CHECK-IN</div>
+      <div class="details">
+        <div class="row">
+          <div class="label">안녕하세요, {{ request.user.name }}님!</div>
+        </div>
+        <div class="row">
+          <div class="home-form">
+            {% if request.user.is_authenticated %}
+            <p>QR 코드를 스캔하여 입장하세요.</p>
+
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <a href="{% url 'login' %}">Logout</a>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="qr-code">
+        <img src="{%static 'images/qr-code-placeholder.png' %}" alt="QR Code" />
+      </div>
+      <div class="credit">문의: SUNNY FACTORY 번호: 070-8777-9224</div>
+    </div>
+  </body>
+</html>
