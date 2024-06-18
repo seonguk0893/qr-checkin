@@ -208,3 +208,7 @@ Temporary Items
 
 my_settings.py
 *.csv
+
+# 사용자 qr
+qrcodes/
+qrcodes/*

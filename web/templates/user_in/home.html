@@ -28,7 +28,10 @@
         </div>
       </div>
       <div class="qr-code">
-        <img src="{%static 'images/qr-code-placeholder.png' %}" alt="QR Code" />
+        <img
+          src="{% static 'qrcodes/' %}{{ request.user.id }}.png"
+          alt="QR Code"
+        />
       </div>
       <div class="credit">문의: SUNNY FACTORY 번호: 070-8777-9224</div>
     </div>

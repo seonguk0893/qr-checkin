@@ -5,6 +5,17 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from .forms import SignUpForm, AuthenticationFormWithPlaceholders
 from django.views.decorators.csrf import csrf_protect
+import requests
+from datetime import datetime
+import qrcode  # 수정된 부분
+import os
+from django.conf import settings
+import time
+
+API_URL_REGISTER = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_001'
+API_URL_UPDATE = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_002'
+API_KEY = '9PPUf6mXnd9DGQItcRU+ppQLUyMFz0oF'
+HEADERS = {'x-api-key': API_KEY}
 
 
 @csrf_protect
@@ -61,6 +72,38 @@ def signup_view(request):
             user.name = form.cleaned_data.get('name')
             user.contact = form.cleaned_data.get('contact')
             user.save()
+
+            # 외부 API에 사용자 정보 등록
+            now = time.strftime('%Y-%m-%d')
+            data = {
+                "user_id": user.id,
+                "user_name": user.name,
+                "hp_no": user.contact,
+                "qrcode_val": user.id,
+                "start_dtm": now+" 00:00:00",
+                "end_dtm": now+" 23:00:00",
+                "user_email": user.email
+            }
+            response = requests.post(
+                API_URL_REGISTER, json=data, headers=HEADERS)
+
+            # QR 코드 생성
+            qr = qrcode.QRCode(version=1, box_size=10, border=5)
+            qr.add_data(data['qrcode_val'])
+            qr.make(fit=True)
+            img = qr.make_image(fill='black', back_color='white')
+
+            # QR 코드 이미지 파일 저장
+            qrcodes_dir = os.path.join(settings.STATIC_ROOT)
+            if not os.path.exists(qrcodes_dir):
+                os.makedirs(qrcodes_dir)
+            img_path = os.path.join(qrcodes_dir, f'{user.id}.png')
+            img.save(img_path)
+
+            # QR 코드 이미지 경로를 사용자 모델에 저장
+            user.qr_code_path = img_path
+            user.save()
+
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
             login(request, user)
@@ -76,3 +119,36 @@ def signup_view(request):
         form = SignUpForm()
         login_form = AuthenticationFormWithPlaceholders()
     return render(request, 'user_in/index.html', {'form': form, 'login_form': login_form})
+
+
+# @csrf_protect
+# def update_user_view(request):
+#     if request.method == 'POST':
+#         user_id = request.POST.get('user_id')
+#         user_name = request.POST.get('user_name')
+#         hp_no = request.POST.get('hp_no')
+#         user_email = request.POST.get('user_email')
+#         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+#         data = {
+#             "user_id": user_id,
+#             "user_name": user_name,
+#             "hp_no": hp_no,
+#             "user_email": user_email,
+#             "start_dtm": now,
+#             "end_dtm": now,
+#             "edit_yn": "Y"
+#         }
+#         response = requests.post(API_URL_UPDATE, json=data, headers=HEADERS)
+#         messages.success(request, "사용자 정보가 수정되었습니다.")
+#         return redirect('/home')
+#     return render(request, 'user_in/update.html')
+
+
+# @csrf_protect
+# def delete_user_view(request, user_id):
+#     API_URL_DELETE = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_003'
+#     data = {"user_id": user_id}
+#     response = requests.post(API_URL_DELETE, json=data, headers=HEADERS)
+#     messages.success(request, "사용자 정보가 삭제되었습니다.")
+#     return redirect('/home')
