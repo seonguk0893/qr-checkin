@@ -52,7 +52,8 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("/home")
+                # 사용자 정보 업데이트 API 호출
+                return update_user_view(request)
             else:
                 messages.error(request, "ID 또는 P/W가 잘못되었습니다.")
         else:
@@ -120,6 +121,28 @@ def signup_view(request):
         login_form = AuthenticationFormWithPlaceholders()
     return render(request, 'user_in/index.html', {'form': form, 'login_form': login_form})
 
+
+@csrf_protect
+def update_user_view(request):
+    if request.method == 'POST':
+        user_id = request.user.id
+        user_name = request.user.name
+        hp_no = request.user.contact
+        user_email = request.user.email
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        data = {
+            "user_id": user_id,
+            "user_name": user_name,
+            "hp_no": hp_no,
+            "user_email": user_email,
+            "start_dtm": now+" 00:00:00",
+            "end_dtm": now+" 23:00:00",
+            "edit_yn": "Y"
+        }
+        response = requests.post(API_URL_UPDATE, json=data, headers=HEADERS)
+        return redirect('/home')
+    return render(request, 'user_in/update.html')
 
 # @csrf_protect
 # def update_user_view(request):
