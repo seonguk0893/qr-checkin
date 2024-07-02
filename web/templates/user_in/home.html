@@ -33,7 +33,25 @@
           alt="QR Code"
         />
       </div>
+      <div id="remaining-time">남은시간</div>
+      <div id="timer">10초</div>
       <div class="credit">문의: SUNNY FACTORY 번호: 070-8777-9224</div>
     </div>
   </body>
+
+  <script>
+    let timer = document.getElementById("timer");
+    let remainingTimeDiv = document.getElementById("remaining-time");
+    let startSecond = 10;
+
+    let interval = setInterval(() => {
+      timer.innerHTML = startSecond + "초";
+      startSecond--;
+      if (startSecond < 0) {
+        clearInterval(interval);
+        timer.innerHTML = "인증 시간이 만료되었습니다.";
+        remainingTimeDiv.style.display = "none";
+      }
+    }, 1000);
+  </script>
 </html>
