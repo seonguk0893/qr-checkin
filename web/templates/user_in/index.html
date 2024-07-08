@@ -30,13 +30,13 @@
       <div class="signup slide-up">
         <div class="center">
           <h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
-          {% csrf_token %} {{ form.non_field_errors }}
           <form
             class="form-holder"
             id="signup-form"
             method="post"
             action="{% url 'signup' %}"
           >
+            {% csrf_token %} {{ form.non_field_errors }}
             <!-- Hidden error messages -->
             <div class="form-group">
               <input
