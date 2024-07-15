@@ -9,7 +9,7 @@
   </head>
   <body>
     <div class="qr-checkin">
-      <div class="header">QR CHECK-IN</div>
+      <div class="header">QR CHECK-IN & OUT</div>
       <div class="details">
         <div class="row">
           <div class="label">안녕하세요, {{ request.user.name }}님!</div>
@@ -17,7 +17,7 @@
         <div class="row">
           <div class="home-form">
             {% if request.user.is_authenticated %}
-            <p>QR 코드를 스캔하여 입장하세요.</p>
+            <p>QR 코드를 스캔하여 입·퇴장하세요.</p>
             <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
               <a href="{% url 'login' %}">Logout</a>
@@ -29,7 +29,7 @@
       <div id="qrCodeContainer" class="qr-code">
         <img
           id="qrCodeImage"
-          src="{% static 'qrcodes/' %}{{ request.user.id }}.png"
+          src="{% static 'qrcodes/qrcodes/' %}{{ request.user.id }}.png"
           alt="QR Code"
         />
       </div>
@@ -38,24 +38,27 @@
       <div id="expiredMessage">
         <div id="retry-box" alt="Retry Box" />
         <div id="retry-icon">
-          <svg
-            style="color: #008cba"
-            xmlns="http://www.w3.org/2000/svg"
-            width="100"
-            height="100"
-            fill="currentColor"
-            class="bi bi-arrow-clockwise"
-            viewBox="0 0 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"
-            />
-            <path
-              d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"
-            />
-          </svg>
-          <div style="color: black">재시도</div>
+          <button>
+            <svg
+              onClick="window.location.reload()"
+              style="color: #008cba"
+              xmlns="http://www.w3.org/2000/svg"
+              width="100"
+              height="100"
+              fill="currentColor"
+              class="bi bi-arrow-clockwise"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"
+              />
+              <path
+                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"
+              />
+              <div style="color: black">재시도</div>
+            </svg>
+          </button>
           <p style="color: black">인증 시간이 만료되었습니다.</p>
         </div>
       </div>
