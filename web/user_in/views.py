@@ -11,6 +11,7 @@ import os
 from django.conf import settings
 import time
 from .models import CustomUser
+import qrcode
 
 API_URL_REGISTER = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_001'
 API_URL_UPDATE = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_002'
