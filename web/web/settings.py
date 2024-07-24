@@ -131,7 +131,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/qrcodes')
+# STATIC_ROOT = BASE_DIR / 'static'
 
 # MEDIA_ROOT 설정: 프로젝트 루트 디렉토리 내에 'media' 폴더 생성
 
