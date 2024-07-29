@@ -12,6 +12,9 @@ from django.conf import settings
 import time
 from .models import CustomUser
 import qrcode
+import io
+import boto3
+
 
 API_URL_REGISTER = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_001'
 API_URL_UPDATE = 'http://3.34.221.229:80/InterFace.asmx/IF_SUNNYFACTORY_002'
@@ -82,8 +85,8 @@ def signup_view(request):
                 "user_name": user.name,
                 "hp_no": user.contact,
                 "qrcode_val": user.id,
-                "start_dtm": now+" 00:00:00",
-                "end_dtm": now+" 23:00:00",
+                "start_dtm": now + " 00:00:00",
+                "end_dtm": now + " 23:00:00",
                 "user_email": user.email
             }
 
@@ -100,15 +103,27 @@ def signup_view(request):
             qr.make(fit=True)
             img = qr.make_image(fill='black', back_color='white')
 
-            # QR 코드 이미지 파일 저장
-            qrcodes_dir = os.path.join(settings.STATIC_ROOT, 'qrcodes')
-            if not os.path.exists(qrcodes_dir):
-                os.makedirs(qrcodes_dir)
-            img_path = os.path.join(qrcodes_dir, f'{user.id}.png')
-            img.save(img_path)
+            # Pillow 이미지로 변환
+            pil_img = img.convert('RGB')
+
+            # QR 코드를 바이트로 변환
+            buffer = io.BytesIO()
+            pil_img.save(buffer, format='PNG')
+            buffer.seek(0)
+
+            # S3에 QR 코드 업로드
+            s3 = boto3.client('s3',
+                              aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                              aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                              region_name=settings.AWS_REGION)
+
+            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
+            qr_code_s3_path = f'qrcodes/{user.id}.png'
+            s3.upload_fileobj(buffer, bucket_name, qr_code_s3_path,
+                              ExtraArgs={'ContentType': 'image/png'})
 
             # QR 코드 이미지 경로를 사용자 모델에 저장
-            user.qr_code_path = img_path
+            user.qr_code_path = f'https://{settings.AWS_S3_CUSTOM_DOMAIN}/{qr_code_s3_path}'
             user.save()
 
             raw_password = form.cleaned_data.get('password1')
