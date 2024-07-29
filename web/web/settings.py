@@ -15,6 +15,34 @@ import os
 from django.contrib.messages import constants as message_constants
 import my_settings as my_settings
 
+
+# AWS S3 설정
+AWS_ACCESS_KEY_ID = my_settings.AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = my_settings.AWS_SECRET_ACCESS_KEY
+AWS_STORAGE_BUCKET_NAME = my_settings.AWS_STORAGE_BUCKET_NAME
+AWS_REGION = my_settings.AWS_REGION
+AWS_S3_CUSTOM_DOMAIN = my_settings.AWS_S3_CUSTOM_DOMAIN
+
+# STORAGES 설정
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "region_name": AWS_REGION,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "region_name": AWS_REGION,
+        },
+    },
+}
+
 # modal
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'debug',
@@ -54,6 +82,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_in',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -127,7 +156,11 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+
+# STATIC_URL 설정
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
