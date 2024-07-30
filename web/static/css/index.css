@@ -36,7 +36,7 @@ body {
   /* 배경 이미지 중앙 정렬 */
   background-size: cover;
   /* 배경 이미지 화면에 꽉 채우기 */
-  background-image: url("https://d77k7si2heyyr.cloudfront.net/upload_files/main/0af32de428734d24b12180f77eb9543a1710411168052.jpg");
+  background-image: url("https://unmanned-store.s3.ap-northeast-2.amazonaws.com/images/background.png");
 }
 
 .form-structor .login {
