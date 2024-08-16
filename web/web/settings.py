@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from django.contrib.messages import constants as message_constants
 import my_settings as my_settings
+import pymysql
+pymysql.install_as_MySQLdb()
 
 
 # AWS S3 설정
