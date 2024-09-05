@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user_in',
     'storages',
+    'livereload',
 ]
 
 MIDDLEWARE = [
