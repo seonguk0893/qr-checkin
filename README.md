@@ -119,3 +119,29 @@
 
 </br>
 
+## 페이지 설명
+
+### 로그인 페이지
+  - biostar API(002.update) 를 통해 출입 QR의 유효 시간 재 설정
+  - ID 와 P/W 불일치 시 에러 모달 구현
+
+<img width="500" alt="Untitled" src="https://github.com/user-attachments/assets/b4132a8a-cc5e-4860-9a7f-d32c99477700">
+<img width="500" alt="Untitled1" src="https://github.com/user-attachments/assets/6b5c13ac-0f76-4bef-bfcf-4178d9d016f2">
+
+
+### 회원가입 페이지
+  - biostar API(001.create) 를 통해 사용자의 출입 QR 생성
+  - ID,Email 입력 모달 구현
+  - P/W 와 P/W Confirm 불일치 시 모달 구현
+  - 모든 정보 불입력 시 모달 구현
+  - 회원 가입 완료 모달 구현
+
+<img width="500" alt="Untitled2" src="https://github.com/user-attachments/assets/6a00ee61-ae13-49b0-81d5-d260c0251d27">
+<img width="500" alt="Untitled3" src="https://github.com/user-attachments/assets/f9bd6fc9-e68a-42bf-8b97-61d6930dd969">
+
+
+### 로그인 후 출입QR 페이지
+
+
+<img width="500" alt="image4" src="https://github.com/user-attachments/assets/ca93e143-974c-49fd-bc83-2f26fa3ab2e0">
+
